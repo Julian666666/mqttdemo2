@@ -1,0 +1,74 @@
+package com.zfs.mqttdemo2;
+
+import org.eclipse.paho.client.mqttv3.MqttClient;
+import org.eclipse.paho.client.mqttv3.MqttConnectOptions;
+import org.eclipse.paho.client.mqttv3.MqttException;
+import org.eclipse.paho.client.mqttv3.MqttMessage;
+import org.eclipse.paho.client.mqttv3.persist.MemoryPersistence;
+
+/**
+ * @ClassName PublishSample.java
+ * @Description 发布端
+ * @Author 朱福盛
+ * @Date 2020/5/29 9:50
+ * @Version 1.0
+ */
+public class PublishSample {
+    public static void main(String[] args) {
+
+        String topic = "IMEI/864626043637690/TD";
+        // 2.设置经纬度
+//        byte[] content = {0x0d, (byte)0x10, (byte)0x4c, (byte)0xca, 0x01, 0x00, (byte)0x10, (byte)0x9c, (byte)0x00, (byte)0x00, (byte)0x08};
+        // 3
+//        byte[] content = {0x05, (byte)0xff, (byte)0xff, 0x03, 0x00};
+        // 4.服务器发布返回方案自动指令
+//        byte[] content = {0x07};
+        // 5.对时
+//        byte[] content = {0x08, (byte)0x00, (byte)0x0f, (byte)0x0d, (byte)0x05, (byte)0x06, (byte)0x14};
+        // 6.清除方案
+//        byte[] content = {0x0f};
+        // 7.每日方案
+//        byte[] content = {0x0f, (byte)0x10, (byte)0x01, (byte)0x01, 0x00, 0x00, (byte)0x13, (byte)0x0d, (byte)0x04, (byte)0x00};
+        byte[] content = {0x0f, (byte)0x10, (byte)0x02, (byte)0x01, 0x00, 0x00, (byte)0x1b, (byte)0x0d, (byte)0x00, (byte)0x00};
+
+
+        int qos = 0;
+        String broker = "tcp://127.0.0.1:1883";
+        String userName = "admin";
+        String password = "password";
+        String clientId = "pubClient";
+        // 内存存储
+        MemoryPersistence persistence = new MemoryPersistence();
+
+        try {
+            // 创建客户端
+            MqttClient sampleClient = new MqttClient(broker, clientId, persistence);
+            // 创建链接参数
+            MqttConnectOptions connOpts = new MqttConnectOptions();
+            // 在重新启动和重新连接时记住状态
+            connOpts.setCleanSession(false);
+            // 设置连接的用户名
+//            connOpts.setUserName(userName);
+//            connOpts.setPassword(password.toCharArray());
+            // 建立连接
+            sampleClient.connect(connOpts);
+            // 创建消息
+            MqttMessage message = new MqttMessage(content);
+            // 设置消息的服务质量
+            message.setQos(qos);
+            // 发布消息
+            sampleClient.publish(topic, message);
+            // 断开连接
+            sampleClient.disconnect();
+            // 关闭客户端
+            sampleClient.close();
+        } catch (MqttException me) {
+            System.out.println("reason " + me.getReasonCode());
+            System.out.println("msg " + me.getMessage());
+            System.out.println("loc " + me.getLocalizedMessage());
+            System.out.println("cause " + me.getCause());
+            System.out.println("excep " + me);
+            me.printStackTrace();
+        }
+    }
+}
