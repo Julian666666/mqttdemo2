@@ -18,7 +18,7 @@ public class SubscribeSample {
     public static void main(String[] args) throws MqttException {
         String HOST = "tcp://127.0.0.1:1883";
 //        String TOPIC = "IMEI/868334033327861/FD";
-        String TOPIC = "IMEI/864626043637690/FD";
+        String TOPIC = "IMEI/868334033336706/FD";
         int qos = 1;
         String clientid = "subClient";
         String userName = "admin";
